@@ -1,0 +1,4 @@
+
+SERVER="http://localhost:8081"
+USERNAME="admin"
+PASSWORD="admin123"

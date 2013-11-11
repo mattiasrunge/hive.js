@@ -1,0 +1,179 @@
+#!/bin/bash
+
+#############################################################################
+## Load configuration
+#############################################################################
+
+DIR=$(dirname $0)
+
+# Default values
+SERVER="http://localhost:8081"
+USERNAME="admin"
+PASSWORD="admin123"
+
+if [ -e $DIR/../conf/config.source ]
+then
+  source $DIR/../conf/config.source
+fi
+
+
+#############################################################################
+## Parse command line arguments 
+#############################################################################
+
+usage() { echo "Usage: $0 [-c <upload|reserve|unreserve>] [-r <repositoryId> ] [-g <groupId>] [-a <artifactId>] [-v <version>] [-f <file>]" 1>&2; exit 1; }
+
+while getopts ":r:c:g:a:v:f:" o; do
+    case "${o}" in
+        c)
+            c=${OPTARG}
+            ((c == "upload" || c == "reserve" || c == "unreserve")) || usage
+            ;;
+        r)
+            r=${OPTARG}
+            ;;
+        g)
+            g=${OPTARG}
+            ;;
+        a)
+            a=${OPTARG}
+            ;;
+        v)
+            v=${OPTARG}
+            ;;
+        f)
+            f=${OPTARG}
+            ;;
+        *)
+            usage
+            ;;
+    esac
+done
+shift $((OPTIND-1))
+
+if [ -z "${c}" ] || [ -z "${r}" ]; then
+  usage
+elif [ "${c}" == "upload" ]; then
+  if [ -z "${g}" ] || [ -z "${v}" ] || [ -z "${f}" ]; then
+    usage
+  fi
+elif [ "${c}" == "reserve" ]; then
+  if [ -z "${g}" ] || [ -z "${a}" ]; then
+    usage
+  fi
+elif [ "${c}" == "unreserve" ]; then
+  if [ -z "${g}" ] || [ -z "${a}" ] || [ -z "${v}" ]; then
+    usage
+  fi
+fi
+
+
+#############################################################################
+## Define variables
+#############################################################################
+
+REPOSITORYID="${r}"
+GROUPID="${g}"
+ARTIFACTID="${a}"
+VERSION="${v}"
+FILE="${f}"
+GROUPPATH=${GROUPID//\./\/} 
+
+if [ -n "$FILE" ]; then
+  FILENAME=$(basename $FILE)
+  PACKAGE=`rev <<< "$FILENAME" | cut -d"." -f1 | rev`
+
+  if [ -z $ARTIFACTID ]; then
+    ARTIFACTID=`rev <<< "$FILENAME" | cut -d"." -f2- | rev`
+  fi
+fi
+
+
+#############################################################################
+## Upload an artifact
+#############################################################################
+
+if [ "${c}" == "upload" ]; then
+  echo "RepositoryId: $REPOSITORYID"
+  echo "GroupId: $GROUPID"
+  echo "ArtifactId: $ARTIFACTID"
+  echo "Version: $VERSION"
+  echo "File: $FILE"
+  echo "Package: $PACKAGE"
+
+  ARTIFACTSHA1=$(sha1sum $FILE | cut -d" " -f1)
+  ARTIFACTMD5=$(md5sum $FILE | cut -d" " -f1)
+  
+  POMFILE=$(mktemp -q)
+  cat $DIR/../resources/template.pom > $POMFILE
+  sed -i s/{group}/$GROUPID/g $POMFILE
+  sed -i s/{artifact}/$ARTIFACTID/g $POMFILE
+  sed -i s/{version}/$VERSION/g $POMFILE
+  sed -i s/{package}/$PACKAGE/g $POMFILE
+  POMSHA1=$(sha1sum $POMFILE | cut -d" " -f1)
+  POMMD5=$(md5sum $POMFILE | cut -d" " -f1)
+
+  echo curl -f -u $USERNAME:$PASSWORD -X PUT -T $FILE "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/$VERSION/$ARTIFACTID-$VERSION.$PACKAGE"
+  curl -f -u $USERNAME:$PASSWORD -X PUT -T $FILE "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/$VERSION/$ARTIFACTID-$VERSION.$PACKAGE"
+  if [[ $? != 0 ]]; then
+    exit $?
+  fi
+  echo ""
+
+  echo curl -f -u $USERNAME:$PASSWORD --request PUT "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/$VERSION/$ARTIFACTID-$VERSION.$PACKAGE.sha1" -d "$ARTIFACTSHA1"
+  curl -f -u $USERNAME:$PASSWORD --request PUT "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/$VERSION/$ARTIFACTID-$VERSION.$PACKAGE.sha1" -d "$ARTIFACTSHA1"
+  if [[ $? != 0 ]]; then
+    exit $?
+  fi
+  echo ""
+
+  echo curl -f -u $USERNAME:$PASSWORD --request PUT "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/$VERSION/$ARTIFACTID-$VERSION.$PACKAGE.md5" -d "$ARTIFACTMD5"
+  curl -f -u $USERNAME:$PASSWORD --request PUT "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/$VERSION/$ARTIFACTID-$VERSION.$PACKAGE.md5" -d "$ARTIFACTMD5"
+  if [[ $? != 0 ]]; then
+    exit $?
+  fi
+  echo ""
+
+  echo curl -f -u $USERNAME:$PASSWORD -X PUT -T $POMFILE "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/$VERSION/$ARTIFACTID-$VERSION.pom"
+  curl -f -u $USERNAME:$PASSWORD -X PUT -T $POMFILE "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/$VERSION/$ARTIFACTID-$VERSION.pom"
+  if [[ $? != 0 ]]; then
+    exit $?
+  fi
+  echo ""
+
+  echo curl -f -u $USERNAME:$PASSWORD --request PUT "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/$VERSION/$ARTIFACTID-$VERSION.pom.sha1" -d "$POMSHA1"
+  curl -f -u $USERNAME:$PASSWORD --request PUT "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/$VERSION/$ARTIFACTID-$VERSION.pom.sha1" -d "$POMSHA1"
+  if [[ $? != 0 ]]; then
+    exit $?
+  fi
+  echo ""
+
+  echo curl -f -u $USERNAME:$PASSWORD --request PUT "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/$VERSION/$ARTIFACTID-$VERSION.pom.md5" -d "$POMMD5"
+  curl -f -u $USERNAME:$PASSWORD --request PUT "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/$VERSION/$ARTIFACTID-$VERSION.pom.md5" -d "$POMMD5"
+  if [[ $? != 0 ]]; then
+    exit $?
+  fi
+  echo ""
+  
+  echo curl -f -u $USERNAME:$PASSWORD "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/regenerate"
+  curl -f -u $USERNAME:$PASSWORD "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/regenerate"
+  if [[ $? != 0 ]]; then
+    exit $?
+  fi
+  echo ""
+elif [ "${c}" == "reserve" ]; then 
+  #echo curl -f -u $USERNAME:$PASSWORD "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/reserve"
+  curl -f -u $USERNAME:$PASSWORD "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/reserve"
+  if [[ $? != 0 ]]; then
+    exit $?
+  fi
+  echo ""
+elif [ "${c}" == "unreserve" ]; then 
+  echo curl -f -u $USERNAME:$PASSWORD "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/$VERSION/unreserve"
+  curl -f -u $USERNAME:$PASSWORD "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/$VERSION/unreserve"
+  if [[ $? != 0 ]]; then
+    exit $?
+  fi
+  echo ""
+fi
+

@@ -1,0 +1,16 @@
+{
+  "repositoriesPath": /var/local/repos/",
+  "enableRedeploy": false,
+  "port": 8081,
+  "users": [
+    {
+      "username": "admin",
+      "password": "admin123"
+    }
+  ],
+  "repos": {
+    "repo1": {
+      "versionScheme": "default"
+    }
+  }
+}
