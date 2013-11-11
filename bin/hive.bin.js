@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 
+var path = require("path");
 var program = require("commander");
 var Server = require("../lib/server.js");
 var packageData = require("../package.json");
 
 program.version(packageData.version);
-program.option("-c, --config <filename>", "Configuration file", "./conf/config.json");
+program.option("-c, --config <filename>", "Configuration file", path.normalize(path.join(__dirname, "conf", "config.json")));
 
 program
   .command("server")
