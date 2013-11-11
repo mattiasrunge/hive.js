@@ -21,13 +21,13 @@ fi
 ## Parse command line arguments 
 #############################################################################
 
-usage() { echo "Usage: $0 [-c <upload|reserve|unreserve>] [-r <repositoryId> ] [-g <groupId>] [-a <artifactId>] [-v <version>] [-f <file>]" 1>&2; exit 1; }
+usage() { echo "Usage: $0 [-c <upload|download|reserve|unreserve>] [-r <repositoryId> ] [-g <groupId>] [-a <artifactId>] [-v <version>] [-f <file>]" 1>&2; exit 1; }
 
 while getopts ":r:c:g:a:v:f:" o; do
     case "${o}" in
         c)
             c=${OPTARG}
-            ((c == "upload" || c == "reserve" || c == "unreserve")) || usage
+            ((c == "upload" || c == "download" || c == "reserve" || c == "unreserve")) || usage
             ;;
         r)
             r=${OPTARG}
@@ -55,6 +55,10 @@ if [ -z "${c}" ] || [ -z "${r}" ]; then
   usage
 elif [ "${c}" == "upload" ]; then
   if [ -z "${g}" ] || [ -z "${v}" ] || [ -z "${f}" ]; then
+    usage
+  fi
+elif [ "${c}" == "download" ]; then
+  if [ -z "${g}" ] || [ -z "${a}" ] || [ -z "${v}" ] || [ -z "${f}" ]; then
     usage
   fi
 elif [ "${c}" == "reserve" ]; then
@@ -157,6 +161,13 @@ if [ "${c}" == "upload" ]; then
   
   echo curl -f -u $USERNAME:$PASSWORD "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/regenerate"
   curl -f -u $USERNAME:$PASSWORD "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/regenerate"
+  if [[ $? != 0 ]]; then
+    exit $?
+  fi
+  echo ""
+elif [ "${c}" == "download" ]; then 
+  echo wget --user=$USERNAME --password=$PASSWORD "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/$VERSION/$ARTIFACTID-$VERSION.$PACKAGE" -O $FILE
+  wget --user=$USERNAME --password=$PASSWORD "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/$VERSION/$ARTIFACTID-$VERSION.$PACKAGE" -O $FILE
   if [[ $? != 0 ]]; then
     exit $?
   fi
