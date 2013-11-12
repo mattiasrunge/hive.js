@@ -9,7 +9,7 @@
     "ensureDir": ">= 1.0.6",
     "moment": ">= 2.4.0",
     "commander": ">= 1.1.1",
-    "negotiator": ">= 0.4.9"
+    "negotiator": ">= 0.3.0"
   },
   "devDependencies": {
     "jshint": "~1.1.0",
