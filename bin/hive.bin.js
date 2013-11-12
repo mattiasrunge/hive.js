@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+
 var path = require("path");
 var program = require("commander");
 var Server = require("../lib/server.js");
@@ -16,6 +17,15 @@ program
     console.log(packageData.name + " version " + packageData.version + " started");
     
     var server = new Server(program);
+    
+    process.on("SIGHUP", function()
+    {
+      console.log("Received SIGHUP, will do a soft restart...");
+      server.close(function()
+      {
+        server = new Server(program);
+      });
+    });
   });
 
 program.parse(process.argv);
@@ -25,3 +35,4 @@ if (program.args.length === 0)
   console.log("No command given");
   program.help();
 }
+

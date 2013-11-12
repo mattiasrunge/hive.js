@@ -1,5 +1,5 @@
 {
-  "repositoriesPath": /var/local/repos/",
+  "repositoriesPath": "/var/local/repos/",
   "enableRedeploy": false,
   "port": 8081,
   "users": [
