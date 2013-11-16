@@ -2,6 +2,7 @@
   "repositoriesPath": "/var/local/repos/",
   "enableRedeploy": false,
   "port": 8081,
+  "versionScheme": "default",
   "users": [
     {
       "username": "admin",
