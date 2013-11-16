@@ -11,8 +11,7 @@ SERVER="http://localhost:8081"
 USERNAME="admin"
 PASSWORD="admin123"
 
-if [ -e $DIR/../conf/config.source ]
-then
+if [ -e $DIR/../conf/config.source ]; then
   source $DIR/../conf/config.source
 fi
 
@@ -21,9 +20,9 @@ fi
 ## Parse command line arguments 
 #############################################################################
 
-usage() { echo "Usage: $0 [-c <upload|download|reserve|unreserve>] [-r <repositoryId> ] [-g <groupId>] [-a <artifactId>] [-v <version>] [-f <file>]" 1>&2; exit 1; }
+usage() { echo "Usage: $0 [-c <upload|download|reserve|unreserve>] [-r <repositoryId> ] [-g <groupId>] [-a <artifactId>] [-v <version>] [-f <file>] [-p <params>" 1>&2; exit 1; }
 
-while getopts ":r:c:g:a:v:f:" o; do
+while getopts ":r:c:g:a:v:f:p:" o; do
     case "${o}" in
         c)
             c=${OPTARG}
@@ -43,6 +42,9 @@ while getopts ":r:c:g:a:v:f:" o; do
             ;;
         f)
             f=${OPTARG}
+            ;;
+        p)
+            p=${OPTARG}
             ;;
         *)
             usage
@@ -82,6 +84,7 @@ ARTIFACTID="${a}"
 VERSION="${v}"
 FILE="${f}"
 GROUPPATH=${GROUPID//\./\/} 
+PARAMS="?${p}"
 
 if [ -n "$FILE" ]; then
   FILENAME=$(basename $FILE)
@@ -104,6 +107,7 @@ if [ "${c}" == "upload" ]; then
   echo "Version: $VERSION"
   echo "File: $FILE"
   echo "Package: $PACKAGE"
+  echo "Params: $PARAMS"
 
   ARTIFACTSHA1=$(sha1sum $FILE | cut -d" " -f1)
   ARTIFACTMD5=$(md5sum $FILE | cut -d" " -f1)
@@ -117,43 +121,43 @@ if [ "${c}" == "upload" ]; then
   POMSHA1=$(sha1sum $POMFILE | cut -d" " -f1)
   POMMD5=$(md5sum $POMFILE | cut -d" " -f1)
 
-  echo curl -f -u $USERNAME:$PASSWORD -X PUT -T $FILE "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/$VERSION/$ARTIFACTID-$VERSION.$PACKAGE"
-  curl -f -u $USERNAME:$PASSWORD -X PUT -T $FILE "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/$VERSION/$ARTIFACTID-$VERSION.$PACKAGE"
+  echo curl -f -u $USERNAME:$PASSWORD -X PUT -T $FILE "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/$VERSION/$ARTIFACTID-$VERSION.$PACKAGE$PARAMS"
+  curl -f -u $USERNAME:$PASSWORD -X PUT -T $FILE "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/$VERSION/$ARTIFACTID-$VERSION.$PACKAGE$PARAMS"
   if [[ $? != 0 ]]; then
     exit $?
   fi
   echo ""
 
-  echo curl -f -u $USERNAME:$PASSWORD --request PUT "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/$VERSION/$ARTIFACTID-$VERSION.$PACKAGE.sha1" -d "$ARTIFACTSHA1"
-  curl -f -u $USERNAME:$PASSWORD --request PUT "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/$VERSION/$ARTIFACTID-$VERSION.$PACKAGE.sha1" -d "$ARTIFACTSHA1"
+  echo curl -f -u $USERNAME:$PASSWORD --request PUT "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/$VERSION/$ARTIFACTID-$VERSION.$PACKAGE.sha1$PARAMS" -d "$ARTIFACTSHA1"
+  curl -f -u $USERNAME:$PASSWORD --request PUT "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/$VERSION/$ARTIFACTID-$VERSION.$PACKAGE.sha1$PARAMS" -d "$ARTIFACTSHA1"
   if [[ $? != 0 ]]; then
     exit $?
   fi
   echo ""
 
-  echo curl -f -u $USERNAME:$PASSWORD --request PUT "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/$VERSION/$ARTIFACTID-$VERSION.$PACKAGE.md5" -d "$ARTIFACTMD5"
-  curl -f -u $USERNAME:$PASSWORD --request PUT "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/$VERSION/$ARTIFACTID-$VERSION.$PACKAGE.md5" -d "$ARTIFACTMD5"
+  echo curl -f -u $USERNAME:$PASSWORD --request PUT "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/$VERSION/$ARTIFACTID-$VERSION.$PACKAGE.md5$PARAMS" -d "$ARTIFACTMD5"
+  curl -f -u $USERNAME:$PASSWORD --request PUT "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/$VERSION/$ARTIFACTID-$VERSION.$PACKAGE.md5$PARAMS" -d "$ARTIFACTMD5"
   if [[ $? != 0 ]]; then
     exit $?
   fi
   echo ""
 
-  echo curl -f -u $USERNAME:$PASSWORD -X PUT -T $POMFILE "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/$VERSION/$ARTIFACTID-$VERSION.pom"
-  curl -f -u $USERNAME:$PASSWORD -X PUT -T $POMFILE "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/$VERSION/$ARTIFACTID-$VERSION.pom"
+  echo curl -f -u $USERNAME:$PASSWORD -X PUT -T $POMFILE "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/$VERSION/$ARTIFACTID-$VERSION.pom$PARAMS"
+  curl -f -u $USERNAME:$PASSWORD -X PUT -T $POMFILE "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/$VERSION/$ARTIFACTID-$VERSION.pom$PARAMS"
   if [[ $? != 0 ]]; then
     exit $?
   fi
   echo ""
 
-  echo curl -f -u $USERNAME:$PASSWORD --request PUT "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/$VERSION/$ARTIFACTID-$VERSION.pom.sha1" -d "$POMSHA1"
-  curl -f -u $USERNAME:$PASSWORD --request PUT "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/$VERSION/$ARTIFACTID-$VERSION.pom.sha1" -d "$POMSHA1"
+  echo curl -f -u $USERNAME:$PASSWORD --request PUT "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/$VERSION/$ARTIFACTID-$VERSION.pom.sha1$PARAMS" -d "$POMSHA1"
+  curl -f -u $USERNAME:$PASSWORD --request PUT "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/$VERSION/$ARTIFACTID-$VERSION.pom.sha1$PARAMS" -d "$POMSHA1"
   if [[ $? != 0 ]]; then
     exit $?
   fi
   echo ""
 
-  echo curl -f -u $USERNAME:$PASSWORD --request PUT "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/$VERSION/$ARTIFACTID-$VERSION.pom.md5" -d "$POMMD5"
-  curl -f -u $USERNAME:$PASSWORD --request PUT "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/$VERSION/$ARTIFACTID-$VERSION.pom.md5" -d "$POMMD5"
+  echo curl -f -u $USERNAME:$PASSWORD --request PUT "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/$VERSION/$ARTIFACTID-$VERSION.pom.md5$PARAMS" -d "$POMMD5"
+  curl -f -u $USERNAME:$PASSWORD --request PUT "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/$VERSION/$ARTIFACTID-$VERSION.pom.md5$PARAMS" -d "$POMMD5"
   if [[ $? != 0 ]]; then
     exit $?
   fi

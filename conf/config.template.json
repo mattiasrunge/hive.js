@@ -12,5 +12,11 @@
     "repo1": {
       "versionScheme": "default"
     }
+  },
+  "mb": {
+    "host": "localhost",
+    "exchange": "default.topic",
+    "routingKey": "default",
+    "messageScheme": "default"
   }
 }
