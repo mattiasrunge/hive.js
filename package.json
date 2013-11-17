@@ -12,7 +12,8 @@
     "achain.js": ">= 0.0.7",
     "humanize": ">= 0.0.9",
     "amqp": ">= 0.1.7",
-    "node-uuid": ">= 1.4.1"
+    "node-uuid": ">= 1.4.1",
+    "basic-logger": ">= 0.4.4"
   },
   "devDependencies": {
     "jshint": "~1.1.0",

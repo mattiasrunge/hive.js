@@ -20,7 +20,7 @@ fi
 ## Parse command line arguments 
 #############################################################################
 
-usage() { echo "Usage: $0 [-c <upload|download|reserve|unreserve|status>] [-r <repositoryId> ] [-g <groupId>] [-a <artifactId>] [-v <version>] [-f <file>] [-p <params>" 1>&2; exit 1; }
+usage() { echo "Usage: $0 [-c <upload|download|reserve|unreserve|status>] [-r <repositoryId> ] [-g <groupId>] [-a <artifactId>] [-v <version>] [-f <file>] [-p <params>]" 1>&2; exit 1; }
 
 while getopts ":r:c:g:a:v:f:p:" o; do
     case "${o}" in
