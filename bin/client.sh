@@ -20,13 +20,13 @@ fi
 ## Parse command line arguments 
 #############################################################################
 
-usage() { echo "Usage: $0 [-c <upload|download|reserve|unreserve>] [-r <repositoryId> ] [-g <groupId>] [-a <artifactId>] [-v <version>] [-f <file>] [-p <params>" 1>&2; exit 1; }
+usage() { echo "Usage: $0 [-c <upload|download|reserve|unreserve|status>] [-r <repositoryId> ] [-g <groupId>] [-a <artifactId>] [-v <version>] [-f <file>] [-p <params>" 1>&2; exit 1; }
 
 while getopts ":r:c:g:a:v:f:p:" o; do
     case "${o}" in
         c)
             c=${OPTARG}
-            ((c == "upload" || c == "download" || c == "reserve" || c == "unreserve")) || usage
+            ((c == "upload" || c == "download" || c == "reserve" || c == "unreserve" || c == "status")) || usage
             ;;
         r)
             r=${OPTARG}
@@ -53,23 +53,25 @@ while getopts ":r:c:g:a:v:f:p:" o; do
 done
 shift $((OPTIND-1))
 
-if [ -z "${c}" ] || [ -z "${r}" ]; then
-  usage
-elif [ "${c}" == "upload" ]; then
-  if [ -z "${g}" ] || [ -z "${v}" ] || [ -z "${f}" ]; then
+if [ "${c}" != "status" ]; then
+  if [ -z "${c}" ] || [ -z "${r}" ]; then
     usage
-  fi
-elif [ "${c}" == "download" ]; then
-  if [ -z "${g}" ] || [ -z "${a}" ] || [ -z "${v}" ] || [ -z "${f}" ]; then
-    usage
-  fi
-elif [ "${c}" == "reserve" ]; then
-  if [ -z "${g}" ] || [ -z "${a}" ]; then
-    usage
-  fi
-elif [ "${c}" == "unreserve" ]; then
-  if [ -z "${g}" ] || [ -z "${a}" ] || [ -z "${v}" ]; then
-    usage
+  elif [ "${c}" == "upload" ]; then
+    if [ -z "${g}" ] || [ -z "${v}" ] || [ -z "${f}" ]; then
+      usage
+    fi
+  elif [ "${c}" == "download" ]; then
+    if [ -z "${g}" ] || [ -z "${a}" ] || [ -z "${v}" ] || [ -z "${f}" ]; then
+      usage
+    fi
+  elif [ "${c}" == "reserve" ]; then
+    if [ -z "${g}" ] || [ -z "${a}" ]; then
+      usage
+    fi
+  elif [ "${c}" == "unreserve" ]; then
+    if [ -z "${g}" ] || [ -z "${a}" ] || [ -z "${v}" ]; then
+      usage
+    fi
   fi
 fi
 
@@ -186,6 +188,12 @@ elif [ "${c}" == "reserve" ]; then
 elif [ "${c}" == "unreserve" ]; then 
   echo curl -f -u $USERNAME:$PASSWORD "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/$VERSION/unreserve"
   curl -f -u $USERNAME:$PASSWORD "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/$VERSION/unreserve"
+  if [[ $? != 0 ]]; then
+    exit $?
+  fi
+  echo ""
+elif [ "${c}" == "status" ]; then
+  curl -f "$SERVER/status"
   if [[ $? != 0 ]]; then
     exit $?
   fi
