@@ -173,7 +173,7 @@ if [ "${c}" == "upload" ]; then
   echo ""
 elif [ "${c}" == "download" ]; then 
   echo wget --user=$USERNAME --password=$PASSWORD "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/$VERSION/$ARTIFACTID-$VERSION.$PACKAGE" -O $FILE
-  wget --user=$USERNAME --password=$PASSWORD "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/$VERSION/$ARTIFACTID-$VERSION.$PACKAGE" -O $FILE
+  wget -nv --user=$USERNAME --password=$PASSWORD "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/$VERSION/$ARTIFACTID-$VERSION.$PACKAGE" -O $FILE
   if [[ $? != 0 ]]; then
     exit $?
   fi
