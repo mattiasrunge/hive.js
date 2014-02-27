@@ -1,6 +1,6 @@
 {
   "name": "hive.js",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "",
   "author": "Mattias Runge <mattias@runge.se>",
   "repository": { "type": "git", "url": "git://github.com/mattiasrunge/hive.js.git" },
