@@ -1,11 +1,11 @@
 {
   "name": "hive.js",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "",
   "author": "Mattias Runge <mattias@runge.se>",
   "repository": { "type": "git", "url": "git://github.com/mattiasrunge/hive.js.git" },
   "dependencies": {
-    "express": ">= 3.4.4",
+    "express": "= 3.4.8",
     "ensureDir": ">= 1.0.6",
     "moment": ">= 2.4.0",
     "commander": ">= 1.1.1",
