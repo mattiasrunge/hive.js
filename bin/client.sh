@@ -7,14 +7,9 @@
 DIR=$(dirname $0)
 
 # Default values
-SERVER="http://localhost:8081"
-USERNAME="admin"
-PASSWORD="admin123"
-
-if [ -e $DIR/../conf/config.source ]; then
-  source $DIR/../conf/config.source
-fi
-
+SERVER=${HIVE_SERVER:-"http://localhost:8081"}
+USERNAME=${HIVE_USERNAME:-"admin"}
+PASSWORD=${HIVE_PASSOWRD:-"admin123"}
 
 #############################################################################
 ## Parse command line arguments 

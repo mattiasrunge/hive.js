@@ -1,6 +1,6 @@
 {
   "name": "hive.js",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "",
   "author": "Mattias Runge <mattias@runge.se>",
   "repository": { "type": "git", "url": "git://github.com/mattiasrunge/hive.js.git" },
@@ -21,6 +21,6 @@
     "assert": ">= 0.4.9"
   },
   "engines": { "node": ">= 0.8.0" },
-  "main": "server.js",
+  "main": "./bin/hive.js.bin.js",
   "license": "GPLv2"
 }

@@ -1,4 +1,4 @@
 
-SERVER="http://localhost:8081"
-USERNAME="admin"
-PASSWORD="admin123"
+HIVE_SERVER="http://localhost:8081"
+HIVE_USERNAME="admin"
+HIVE_PASSWORD="admin123"
