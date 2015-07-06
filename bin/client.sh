@@ -111,10 +111,10 @@ if [ "${c}" == "upload" ]; then
   
   POMFILE=$(mktemp -q)
   cat $DIR/../resources/template.pom > $POMFILE
-  sed -i s/{group}/$GROUPID/g $POMFILE
-  sed -i s/{artifact}/$ARTIFACTID/g $POMFILE
-  sed -i s/{version}/$VERSION/g $POMFILE
-  sed -i s/{package}/$PACKAGE/g $POMFILE
+  sed -i s|{group}|$GROUPID|g $POMFILE
+  sed -i s|{artifact}|$ARTIFACTID|g $POMFILE
+  sed -i s|{version}|$VERSION|g $POMFILE
+  sed -i s|{package}|$PACKAGE|g $POMFILE
   POMSHA1=$(sha1sum $POMFILE | cut -d" " -f1)
   POMMD5=$(md5sum $POMFILE | cut -d" " -f1)
 
