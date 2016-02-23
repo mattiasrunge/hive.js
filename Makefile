@@ -1,12 +1,25 @@
-SRC = $(shell find . \( -name "*.js" \) -o \( -name node_modules -prune \) -type f | sort)
+SRC = $(shell git ls-files \*.js)
+DEFAULT_FLAGS := --reporter spec --ui tdd --recursive test --harmony
+DEPS := deps
 
-lint:
-	@jshint ${SRC}
+all: test lint coverage
 
-test:
-	@mocha --reporter spec --ui tdd --recursive lib
+deps:
+	for i in 1 2 3 4 5; do npm --cache ./node_modules/.npm-cache install && break; done
 
-watchtest:
-	@mocha --reporter spec --ui tdd --recursive lib --watch
+test: $(DEPS)
+	./node_modules/.bin/mocha --max-old-space-size=8192 $(DEFAULT_FLAGS)
 
-.PHONY: lint test watchtest
+lint: $(DEPS)
+	./node_modules/.bin/jshint --verbose $(SRC)
+
+style: $(DEPS)
+	./node_modules/.bin/jscs -e --verbose $(SRC)
+
+reg: test lint style
+
+configure: $(DEPS)
+
+
+
+.PHONY: all deps test lint style reg

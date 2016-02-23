@@ -1,0 +1,12 @@
+{
+  "enableRedeploy": false,
+  "port": 8081,
+  "versionScheme": "default",
+  "users": [
+    {
+      "username": "admin",
+      "password": "admin123"
+    }
+  ],
+  "repos": {}
+}

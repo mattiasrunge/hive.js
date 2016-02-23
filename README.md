@@ -13,49 +13,49 @@ hive.js strives to be a lightweight alternativ to servers such as Nexus. It does
 * Plugin based version schemes
 * Integration with a Message Bus for new artifacts
 * Plugin based message creation
- 
+
 ## Start the server
 ```bash
-./bin/hive.bin.js server
+./bin/hive.bin.js
 ```
- 
+
 ## Client commands
 
 ### Generic
 ```bash
-./bin/hive-client.sh
+./bin/client.sh
 Usage: ./bin/client.sh [-c <upload|download|reserve|unreserve|status>] [-r <repositoryId> ] [-g <groupId>] [-a <artifactId>] [-v <version>] [-f <file>] [-p <params>]
 ```
 
 ### Checking server status
 ```bash
-./bin/hive-client.sh -c status
+./bin/client.sh -c status
 OK
 ```
 
 ### Reserving a revision
 This will reserve and return the next valid revision, can be used before a build.
 ```bash
-./bin/hive-client.sh -c reserve -r <RepositoryId> -g <GroupId> -a <ArtifactId>
+./bin/client.sh -c reserve -r <RepositoryId> -g <GroupId> -a <ArtifactId>
 R1A
 ```
 
 ### Unreserving a revision
 This will unreserve a previously reserved revision, can be used if a build fails.
 ```bash
-./bin/hive-client.sh -c unreserve -r <RepositoryId> -g <GroupId> -a <ArtifactId> -v <R-State>
+./bin/client.sh -c unreserve -r <RepositoryId> -g <GroupId> -a <ArtifactId> -v <R-State>
 ```
 
 ### Upload an artifact
 This will upload the <Filename> as an artifact and supply the MB with params in a URL-encoded manner.
 ```bash
-./bin/hive-client.sh -c upload -r <RepositoryId> -g <GroupId> -a <ArtifactId> -v <R-State> -f <Filename> -p "inputEventIds%5b%5d=<Id1>&inputEventIds%5b%5d=<Id2>"
+./bin/client.sh -c upload -r <RepositoryId> -g <GroupId> -a <ArtifactId> -v <R-State> -f <Filename> -p "inputEventIds%5b%5d=<Id1>&inputEventIds%5b%5d=<Id2>"
 ```
 
 ### Download an artifact
 This will save the artifact to the <Filename>.
 ```bash
-./bin/hive-client.sh -c download -r <RepositoryId> -g <GroupId> -a <ArtifactId> -v <R-State> -f <Filename>
+./bin/client.sh -c download -r <RepositoryId> -g <GroupId> -a <ArtifactId> -v <R-State> -f <Filename>
 OK
 ```
 

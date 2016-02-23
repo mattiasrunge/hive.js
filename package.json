@@ -1,26 +1,48 @@
 {
   "name": "hive.js",
-  "version": "0.0.11",
+  "version": "0.1.0",
   "description": "",
   "author": "Mattias Runge <mattias@runge.se>",
-  "repository": { "type": "git", "url": "git://github.com/mattiasrunge/hive.js.git" },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/mattiasrunge/hive.js.git"
+  },
   "dependencies": {
-    "express": "3.4.8",
-    "ensureDir": "1.0.6",
-    "moment": "2.8.3",
-    "commander": "2.3.0",
     "achain.js": "0.0.8",
-    "humanize": "0.0.9",
     "amqp": "0.2.0",
+    "basic-auth": "^1.0.3",
+    "basic-logger": "0.4.4",
+    "bluebird": "3.0.6",
+    "bootstrap": "^3.3.6",
+    "commander": "2.3.0",
+    "compression": "^1.6.1",
+    "ensureDir": "1.0.6",
+    "express": "4.13.3",
+    "extend": "3.0.0",
+    "fs-extra-promise": "0.3.1",
+    "humanize": "0.0.9",
+    "jade": "^1.11.0",
+    "moment": "2.9.0",
     "node-uuid": "1.4.1",
-    "basic-logger": "0.4.4"
+    "request-promise": "1.0.2",
+    "server-destroy": "^1.0.1",
+    "umask": "^1.1.0",
+    "winston": "2.1.1",
+    "yargs": "3.31.0"
   },
   "devDependencies": {
-    "jshint": "1.1.0",
-    "proxyquire": "1.0.1",
-    "assert": "1.1.2"
+    "jshint": "2.8.0",
+    "jscs": "1.13.1",
+    "istanbul": "0.3.5",
+    "mocha": "2.2.5",
+    "timemachine": "0.2.5",
+    "chai": "3.4.1",
+    "get-port": "2.1.0",
+    "tmp": "0.0.28"
   },
-  "engines": { "node": ">= 0.8.0" },
+  "engines": {
+    "node": ">= 0.12.7"
+  },
   "main": "./bin/hive.js.bin.js",
   "license": "GPLv2"
 }

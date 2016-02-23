@@ -12,7 +12,7 @@ USERNAME=${HIVE_USERNAME:-"admin"}
 PASSWORD=${HIVE_PASSOWRD:-"admin123"}
 
 #############################################################################
-## Parse command line arguments 
+## Parse command line arguments
 #############################################################################
 
 usage() { echo "Usage: $0 [-c <upload|download|reserve|unreserve|status>] [-r <repositoryId> ] [-g <groupId>] [-a <artifactId>] [-v <version>] [-f <file>] [-p <params>]" 1>&2; exit 1; }
@@ -80,7 +80,7 @@ GROUPID="${g}"
 ARTIFACTID="${a}"
 VERSION="${v}"
 FILE="${f}"
-GROUPPATH=${GROUPID//\./\/} 
+GROUPPATH=${GROUPID//\./\/}
 PARAMS="?${p}"
 
 if [ -n "$FILE" ]; then
@@ -108,9 +108,9 @@ if [ "${c}" == "upload" ]; then
 
   ARTIFACTSHA1=$(sha1sum $FILE | cut -d" " -f1)
   ARTIFACTMD5=$(md5sum $FILE | cut -d" " -f1)
-  
+
   POMFILE=$(mktemp -q)
-  cat $DIR/../resources/template.pom > $POMFILE
+  cat $DIR/../templates/template.pom > $POMFILE
   sed -i s,{group},$GROUPID,g $POMFILE
   sed -i s,{artifact},$ARTIFACTID,g $POMFILE
   sed -i s,{version},$VERSION,g $POMFILE
@@ -159,28 +159,28 @@ if [ "${c}" == "upload" ]; then
     exit $?
   fi
   echo ""
-  
+
   echo curl -k -f -u $USERNAME:$PASSWORD "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/regenerate"
   curl -k -f -u $USERNAME:$PASSWORD "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/regenerate"
   if [[ $? != 0 ]]; then
     exit $?
   fi
   echo ""
-elif [ "${c}" == "download" ]; then 
+elif [ "${c}" == "download" ]; then
   echo wget --no-check-certificate --user=$USERNAME --password=$PASSWORD "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/$VERSION/$ARTIFACTID-$VERSION.$PACKAGE" -O $FILE
   wget --no-check-certificate -nv --user=$USERNAME --password=$PASSWORD "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/$VERSION/$ARTIFACTID-$VERSION.$PACKAGE" -O $FILE
   if [[ $? != 0 ]]; then
     exit $?
   fi
   echo ""
-elif [ "${c}" == "reserve" ]; then 
+elif [ "${c}" == "reserve" ]; then
   #echo curl -k -f -u $USERNAME:$PASSWORD "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/reserve"
   curl -k -f -u $USERNAME:$PASSWORD "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/reserve"
   if [[ $? != 0 ]]; then
     exit $?
   fi
   echo ""
-elif [ "${c}" == "unreserve" ]; then 
+elif [ "${c}" == "unreserve" ]; then
   echo curl -k -f -u $USERNAME:$PASSWORD "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/$VERSION/unreserve"
   curl -k -f -u $USERNAME:$PASSWORD "$SERVER/$REPOSITORYID/$GROUPPATH/$ARTIFACTID/$VERSION/unreserve"
   if [[ $? != 0 ]]; then

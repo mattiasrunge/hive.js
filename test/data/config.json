@@ -1,0 +1,15 @@
+{
+    "enableRedeploy": false,
+    "versionScheme": "default",
+    "users": [
+        {
+            "username": "admin",
+            "password": "admin123"
+        }
+    ],
+    "repos": {
+        "repo1": {
+            "versionScheme": "default"
+        }
+    }
+}

@@ -1,41 +1,35 @@
-#!/usr/bin/env node
+"use strict";
 
+let path = require("path");
+let main = require("../lib/main");
+let packageData = require("../package.json");
+let argv = require("yargs")
+.usage("Usage: $0 -c [config]")
+.example("$0 -c ./conf/config.json", "Start server with specific configuration file")
+.help("help")
+.version(packageData.version, "version")
+.strict()
+.option("c", {
+    alias: "config",
+    default: path.relative(__dirname + "/..", "conf/config.json"),
+    describe: "Configuration file",
+    type: "string"
+})
+.option("level", {
+    default: "info",
+    describe: "Log level",
+    type: "string"
+})
+.argv;
 
-var path = require("path");
-var program = require("commander");
-var Logger = require("basic-logger");
-var Server = require("../lib/server.js");
-var packageData = require("../package.json");
+process
+.on("SIGINT", () => { main.stop().then(process.exit); })
+.on("SIGTERM", () => { main.stop().then(process.exit); });
 
-var log = new Logger();
-
-program.version(packageData.version);
-program.option("-c, --config <filename>", "Configuration file", path.normalize(path.join(__dirname, "..", "conf", "config.json")));
-
-program
-  .command("server")
-  .description("Start the Hive.js server")
-  .action(function(options)
-  {
-    log.info(packageData.name + " version " + packageData.version + " started");
-    
-    var server = new Server(program);
-    
-    process.on("SIGHUP", function()
-    {
-      log.error("Received SIGHUP, will do a soft restart...");
-      server.close(function()
-      {
-        server = new Server(program);
-      });
-    });
-  });
-
-program.parse(process.argv);
-
-if (program.args.length === 0)
-{
-  log.error("No command given");
-  program.help();
-}
-
+main.start(argv, packageData.version)
+.catch(function(error) {
+    console.error("FATAL ERROR");
+    console.error(error);
+    console.error(error.stack);
+    process.exit(255);
+});

@@ -1,0 +1,70 @@
+doctype html
+html(lang="en")
+    head
+        title=directoryPath
+        link(rel="stylesheet" type="text/css" href="/css/bootstrap.min.css")
+        style
+            |  body {
+            |    overflow-y: scroll;
+            |  }
+            |  .page-header > h1 > span {
+            |    padding-left: 20px;
+            |  }
+            |  .glyphicon {
+            |    margin-right: 10px;
+            |  }
+            |  .column-size {
+            |    width: 150px;
+            |  }
+            |  .column-created {
+            |    width: 300px;
+            |  }
+
+    body
+        div.container
+            div.row
+                div.page-header
+                    h1
+                        span.glyphicon.glyphicon-hdd
+                        span Artifact Repository Manager
+
+                ol.breadcrumb
+                    each entry, index in breadcrumb
+                        if(index === breadcrumb.length - 1)
+                            li.active=entry.name
+                        else
+                            li
+                                a(href=entry.url)=entry.name
+
+                table.table.table-striped
+                    thead
+                        tr
+                            th.column-name Name
+                            th.column-size Size
+                            th.column-created Created
+                    tbody
+                        each file in files
+                            tr
+                                if(file.isRepo)
+                                    td
+                                        a(href=file.path)
+                                            span.glyphicon.glyphicon-hdd
+                                            span=file.name
+                                else if(file.isDir)
+                                    td
+                                        a(href=file.path)
+                                            span.glyphicon.glyphicon-folder-open
+                                            span=file.name
+                                else
+                                    td
+                                        a(href=file.path)
+                                            span.glyphicon.glyphicon-file
+                                            span=file.name
+                                td=file.size
+                                td=file.created
+
+                hr
+                small.text-muted
+                    span Powered by&nbsp;
+                    a(href="https://github.com/mattiasrunge/hive.js")="hive.js. "
+                    span A Maven 2 compatible repository server.
