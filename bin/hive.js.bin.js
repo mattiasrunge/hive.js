@@ -7,7 +7,6 @@ let argv = require("yargs")
 .usage("Usage: $0 -c [config]")
 .example("$0 -c ./conf/config.json", "Start server with specific configuration file")
 .help("help")
-.version(packageData.version, "version")
 .strict()
 .option("c", {
     alias: "config",
