@@ -5,10 +5,11 @@ DEPS := deps
 all: test lint coverage
 
 deps:
-	for i in 1 2 3 4 5; do npm --cache ./node_modules/.npm-cache install && break; done
+	export XDG_CACHE_HOME=./node_modules
+	npm --cache ./node_modules/.npm-cache install
 
 test: $(DEPS)
-	./node_modules/.bin/mocha --max-old-space-size=8192 $(DEFAULT_FLAGS)
+	./node_modules/.bin/mocha $(DEFAULT_FLAGS)
 
 lint: $(DEPS)
 	./node_modules/.bin/jshint --verbose $(SRC)
