@@ -22,6 +22,30 @@ describe("rstate", () => {
                 assert.equal(rstate.valid(invalid), false, invalid + " should not be valid");
             }
         });
+
+        it("should test valid pstates as valid", function*() {
+            rstate.settings({ prototype: true });
+
+            let valids = [ "P1A01", "P1A99", "P1AA01", "P1AA99", "P1ZZ01", "P1ZZ99", "P99A01", "P99A99", "P99AA01", "P99AA99", "P99ZZ01", "P99ZZ99", "P1A", "P1A_2", "P1A02_3" ];
+
+            for (let valid of valids) {
+                assert.ok(rstate.valid(valid), valid + " should be valid");
+            }
+
+            rstate.settings({ prototype: false });
+        });
+
+        it("should test invalid rstates as invalid", function*() {
+            rstate.settings({ prototype: true });
+
+            let invalids = [ "P1A00", "P1A001", "P1AA00", "P1AAA", "P1I", "P1O", "P1Q", "P1R", "P1W", "X1", "PA12", "P3R01" ];
+
+            for (let invalid of invalids) {
+                assert.equal(rstate.valid(invalid), false, invalid + " should not be valid");
+            }
+
+            rstate.settings({ prototype: false });
+        });
     });
 
     describe("sort", () => {
