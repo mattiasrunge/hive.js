@@ -1,6 +1,9 @@
 # hive.js
 A somewhat maven2 compatible repository with some extra features.
 
+## Tests
+[![Build Status](https://travis-ci.org/mattiasrunge/hive.js.png)](https://travis-ci.org/mattiasrunge/hive.js)
+
 ## Background
 hive.js strives to be a lightweight alternativ to servers such as Nexus. It does not implement all the advanced features but have a few additions of it's own.
 

@@ -1,7 +1,7 @@
 {
   "name": "hive.js",
   "version": "0.1.0",
-  "description": "",
+  "description": "A somewhat maven2 compatible repository with some extra features.",
   "author": "Mattias Runge <mattias@runge.se>",
   "repository": {
     "type": "git",
@@ -37,6 +37,9 @@
   },
   "engines": {
     "node": ">= 0.12.7"
+  },
+  "scripts": {
+    "test": "make all"
   },
   "main": "./bin/hive.js.bin.js",
   "license": "GPLv2"

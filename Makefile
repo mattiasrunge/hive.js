@@ -2,7 +2,7 @@ SRC = $(shell git ls-files \*.js)
 DEFAULT_FLAGS := --reporter spec --ui tdd --recursive test --harmony
 DEPS := deps
 
-all: test lint coverage
+all: test lint style
 
 deps:
 	export XDG_CACHE_HOME=./node_modules
